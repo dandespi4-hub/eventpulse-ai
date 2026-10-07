@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="EventPulse AI market event and sentiment intelligence dashboard" />
+  <title>EventPulse AI — Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="app" class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <header id="topbar" class="topbar"></header>
+      <div id="notice" class="notice hidden"></div>
+      <section id="content" class="content" aria-live="polite">
+        <div class="loader"><span></span><p>Synchronizing intelligence layer</p></div>
+      </section>
+    </main>
+  </div>
+  <div id="detail-modal" class="modal" aria-hidden="true"></div>
+  <div id="command" class="command" aria-hidden="true"></div>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>
