@@ -1,14 +1,14 @@
 """Optional Qwen-backed analyst. Grounded strictly in the current dashboard data.
 
-Enabled only when DASHSCOPE_API_KEY is set. Any failure returns None so the
+Enabled only when BITGET_QWEN_API_KEY is set. Any failure returns None so the
 caller falls back to the deterministic rules engine — the demo never breaks.
 """
 import json
 import os
 import urllib.request
 
-API_URL = os.getenv("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions")
-MODEL = os.getenv("QWEN_MODEL", "qwen-plus")
+API_URL = os.getenv("BITGET_QWEN_BASE_URL", "https://hackathon.bitgetops.com/v1/chat/completions")
+MODEL = os.getenv("BITGET_QWEN_MODEL", "qwen3.8-max")
 
 SYSTEM = """You are EventPulse, a market-event analyst. Answer ONLY from the DATA block.
 Rules:
@@ -22,7 +22,7 @@ Respond with ONLY a JSON object, no code fences:
 
 
 def enabled() -> bool:
-    return bool(os.getenv("DASHSCOPE_API_KEY"))
+    return bool(os.getenv("BITGET_QWEN_API_KEY"))
 
 
 def _snapshot(assets, events, alerts) -> dict:
@@ -46,7 +46,7 @@ def ask(question: str, assets, events, alerts) -> dict | None:
         data=json.dumps(body).encode(),
         headers={
             "content-type": "application/json",
-            "authorization": f"Bearer {os.environ['DASHSCOPE_API_KEY']}",
+            "authorization": f"Bearer {os.environ['BITGET_QWEN_API_KEY']}",
         },
     )
     try:

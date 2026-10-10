@@ -13,8 +13,8 @@ EventPulse connects detected events, abnormal sentiment shifts, social activity,
 
 Open <http://localhost:3000>. Works fully offline (fonts fall back to system fonts).
 
-### Optional: Claude-backed analyst
-Set `ANTHROPIC_API_KEY` (see `.env.example`) before launching. The AI Analyst then answers *any* question, grounded strictly in the dashboard data, with citations you can click. If the key is missing or the call fails, it silently falls back to the rules engine, so the demo never breaks. The answer card shows which engine produced it.
+### Optional: Bitget Qwen-backed analyst
+Set `BITGET_QWEN_API_KEY` (see `.env.example`) before launching. The AI Analyst then uses Bitget-hosted Qwen `qwen3.8-max`, grounded strictly in the dashboard data, with citations you can click. If the key is missing or the call fails, it silently falls back to the rules engine, so the demo never breaks. The answer card shows whether Qwen produced the answer.
 
 ## Demo controls
 | Control | What it does |
@@ -29,7 +29,7 @@ See **DEMO_SCRIPT.md** for a 3-minute walkthrough and judge Q&A.
 - `backend/models.py` — typed domain models (Pydantic)
 - `backend/seed.py` — deterministic demo data
 - `backend/engine.py` — shock detection, impact scoring, grounded Q&A (rules)
-- `backend/llm.py` — optional Claude analyst, grounded in the same data, graceful fallback
+- `backend/llm.py` — optional Bitget-hosted Qwen analyst, grounded in the same data, graceful fallback
 - `backend/simulator.py` — scripted breaking-event injector
 - `backend/main.py` — REST API + static frontend
 - `frontend/` — dependency-free SPA with SVG charts
