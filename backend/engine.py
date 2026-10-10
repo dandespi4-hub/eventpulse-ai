@@ -2,7 +2,7 @@
 import re
 from statistics import mean, pstdev
 
-from . import llm
+from . import bitget, llm
 from .models import ChatResponse
 from .seed import ASSETS, EVENTS, ALERTS, SENTIMENT_HISTORY
 
@@ -30,16 +30,20 @@ def market_mood() -> dict:
 
 
 def get_dashboard() -> dict:
+    live_assets, as_of = bitget.sync_assets(ASSETS)
     shocks = {symbol: classify_shock(history) for symbol, history in SENTIMENT_HISTORY.items()}
     verified = sum(1 for e in EVENTS if e.evidence_score >= 70)
     source_names = {s.name for e in EVENTS for s in e.sources}
     return {
         "meta": {
-            "mode": "DEMO FEED",
-            "as_of": "2026-10-04T11:00:00Z",
+            "mode": "BITGET LIVE",
+            "as_of": as_of,
             "coverage": f"{len(ASSETS)} assets · {len(source_names)} sources",
             "sources": len(source_names),
             "llm": llm.enabled(),
+            "llm_provider": "Qwen",
+            "market_provider": "Bitget",
+            "live_assets": live_assets,
         },
         "mood": market_mood(),
         "stats": {

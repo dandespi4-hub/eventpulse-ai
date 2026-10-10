@@ -1,14 +1,14 @@
-"""Optional Claude-backed analyst. Grounded strictly in the current dashboard data.
+"""Optional Qwen-backed analyst. Grounded strictly in the current dashboard data.
 
-Enabled only when ANTHROPIC_API_KEY is set. Any failure returns None so the
+Enabled only when DASHSCOPE_API_KEY is set. Any failure returns None so the
 caller falls back to the deterministic rules engine — the demo never breaks.
 """
 import json
 import os
 import urllib.request
 
-API_URL = "https://api.anthropic.com/v1/messages"
-MODEL = os.getenv("EVENTPULSE_MODEL", "claude-sonnet-5-5")
+API_URL = os.getenv("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions")
+MODEL = os.getenv("QWEN_MODEL", "qwen-plus")
 
 SYSTEM = """You are EventPulse, a market-event analyst. Answer ONLY from the DATA block.
 Rules:
@@ -22,7 +22,7 @@ Respond with ONLY a JSON object, no code fences:
 
 
 def enabled() -> bool:
-    return bool(os.getenv("ANTHROPIC_API_KEY"))
+    return bool(os.getenv("DASHSCOPE_API_KEY"))
 
 
 def _snapshot(assets, events, alerts) -> dict:
@@ -37,25 +37,24 @@ def ask(question: str, assets, events, alerts) -> dict | None:
     if not enabled():
         return None
     valid = {e.id for e in events} | {s.name for e in events for s in e.sources}
-    body = {
-        "model": MODEL,
-        "max_tokens": 500,
-        "system": SYSTEM,
-        "messages": [{"role": "user", "content": f"DATA:\n{json.dumps(_snapshot(assets, events, alerts))}\n\nQUESTION: {question}"}],
-    }
+    body = {"model": MODEL, "max_tokens": 500, "temperature": 0.2, "messages": [
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content": f"DATA:\n{json.dumps(_snapshot(assets, events, alerts))}\n\nQUESTION: {question}"},
+    ]}
     req = urllib.request.Request(
         API_URL,
         data=json.dumps(body).encode(),
         headers={
             "content-type": "application/json",
-            "x-api-key": os.environ["ANTHROPIC_API_KEY"],
-            "anthropic-version": "2023-06-01",
+            "authorization": f"Bearer {os.environ['DASHSCOPE_API_KEY']}",
         },
     )
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             payload = json.load(resp)
-        text = "".join(b.get("text", "") for b in payload.get("content", []) if b.get("type") == "text").strip()
+        message = payload.get("choices", [{}])[0].get("message", {})
+        content = message.get("content", "")
+        text = "".join(part.get("text", "") for part in content if isinstance(part, dict)).strip() if isinstance(content, list) else str(content).strip()
         text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
         data = json.loads(text)
         answer = str(data["answer"]).strip()

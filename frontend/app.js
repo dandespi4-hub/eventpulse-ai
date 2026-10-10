@@ -36,10 +36,10 @@ function renderShell() {
     <div class="brand"><div class="brand-mark">${icons.logo}</div><div class="brand-name">EventPulse AI<small>INTELLIGENCE SYSTEM</small></div></div>
     <div class="nav-group">Workspace</div>
     <nav>${navItems.map(([id,label]) => `<button class="nav-item ${state.view===id?'active':''}" data-view="${id}">${icons[id]}<span>${label}</span>${id==='alerts'?`<b class="badge">${state.data.alerts.length}</b>`:''}</button>`).join('')}</nav>
-    <div class="system-card"><div class="status-line"><span><i class="status-dot"></i>DEMO PIPELINE</span><span>${state.data.meta.llm?'CLAUDE ON':'RULES'}</span></div><strong>SEEDED INTELLIGENCE FEED</strong><p>${state.data.meta.sources} sources indexed<br>As of 11:00 UTC · 04 Oct 2026</p></div>`;
+    <div class="system-card"><div class="status-line"><span><i class="status-dot"></i>BITGET LIVE</span><span>${state.data.meta.llm?'QWEN POWERED':'QWEN KEY NEEDED'}</span></div><strong>BITGET MARKET DATA</strong><p>${state.data.meta.live_assets} crypto assets live from Bitget<br>${state.data.meta.llm?'Qwen powers analysis':'Add DASHSCOPE_API_KEY in Render for Qwen analysis'}</p></div>`;
   $('#topbar').innerHTML = `
-    <div class="page-heading"><h1>${navItems.find(n=>n[0]===state.view)?.[1] || 'Overview'}</h1><p>MARKET EVENT &amp; SENTIMENT INTELLIGENCE · 04 OCT 2026</p></div>
-    <div class="top-actions"><span class="feed-pill"><i class="status-dot"></i>DEMO FEED</span><button class="ghost-button" id="inject" title="Inject a scripted breaking event (Ctrl+Shift+E)">⚡ INJECT EVENT</button><button class="icon-button" id="reset" title="Reset demo data" aria-label="Reset demo">↺</button><button class="icon-button" id="bell" aria-label="Alerts">${icons.alerts}${state.unread?'<i class="unread-dot"></i>':''}</button><button class="ask-button" id="open-ai">ASK EVENTPULSE <span>⌘ K</span></button></div>`;
+    <div class="page-heading"><h1>${navItems.find(n=>n[0]===state.view)?.[1] || 'Overview'}</h1><p>BITGET MARKET DATA · ${new Date(state.data.meta.as_of).toISOString().replace('T',' · ').slice(0,19)} UTC</p></div>
+    <div class="top-actions"><span class="feed-pill"><i class="status-dot"></i>BITGET LIVE</span><button class="ghost-button" id="inject" title="Inject a scripted breaking event (Ctrl+Shift+E)">⚡ INJECT EVENT</button><button class="icon-button" id="reset" title="Reset demo data" aria-label="Reset demo">↺</button><button class="icon-button" id="bell" aria-label="Alerts">${icons.alerts}${state.unread?'<i class="unread-dot"></i>':''}</button><button class="ask-button" id="open-ai">ASK EVENTPULSE <span>⌘ K</span></button></div>`;
 }
 
 function bindGlobalEvents() {
@@ -174,7 +174,7 @@ function renderAnalyst() {
 }
 
 const citeHtml = (list) => list.map(c => state.data.events.some(e => e.id === c) ? `<button class="citation link" data-event="${esc(c)}">${esc(c)}</button>` : `<span class="citation">${esc(c)}</span>`).join('');
-const modeTag = (m) => `<span class="mode-tag ${m}">${m === 'llm' ? 'CLAUDE · GROUNDED IN DASHBOARD DATA' : 'RULES ENGINE · DETERMINISTIC'}</span>`;
+const modeTag = (m) => `<span class="mode-tag ${m}">${m === 'llm' ? 'QWEN · GROUNDED IN BITGET + EVENTPULSE DATA' : 'RULES ENGINE · QWEN KEY NEEDED'}</span>`;
 async function runInlineAI(question) {
   if (!question.trim()) return;
   const box=$('#inline-answer'); box.innerHTML='<span class="thinking">ANALYZING EVENT GRAPH…</span>';

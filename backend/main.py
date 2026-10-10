@@ -23,7 +23,7 @@ FRONTEND = ROOT / "frontend"
 
 @app.get("/api/health")
 def health():
-    return {"status": "operational", "mode": "seeded-demo", "version": "1.1.0", "llm_enabled": llm.enabled()}
+    return {"status": "operational", "mode": "bitget-live", "version": "1.1.0", "llm_provider": "Qwen", "llm_enabled": llm.enabled()}
 
 
 @app.get("/api/dashboard")
